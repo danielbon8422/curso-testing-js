@@ -26,5 +26,7 @@
     "eslint-plugin-import": "^2.25.4",
     "jest": "^27.5.1",
     "nodemon": "^2.0.15"
-  }
+  },
+  "type": "commonjs"
+
 }
