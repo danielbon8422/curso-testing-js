@@ -118,8 +118,67 @@ test('verificar Hidden Layers', async ({ page }) => {
 
   //  click (puede estar cubierto → force)
   await blueButton.click({ force: true });
+  });
 
+  // Test 5 "Ajax Data"
+test('click en AJAX Data', async ({ page }) => {
+  // URL
+  await page.goto('http://uitestingplayground.com/');
+
+  // Click AJAX
+  await page.getByRole('link', { name: 'AJAX Data' }).click();
+
+  // Validar
+  await expect(page).toHaveURL('http://uitestingplayground.com/ajax');
+  await expect(page.locator('h3')).toHaveText('AJAX Data');
+
+  //Revisar texto
+
+await expect(page.locator('p')).toHaveText(
+  'An element may appear on a page after processing of an AJAX request to a web server. A test should be able to wait for an element to show up.'
+);
+
+//Revisar Scenario
+
+await expect(
+  page.getByRole('heading', { name: 'Scenario' })
+).toBeVisible();
+
+
+
+const items = page.locator('li');
+//primer li
+await expect(
+  page.locator('li:has-text("Record the following steps")')
+).toBeVisible();
+//segundo li
+await expect(
+  page.locator('li:has-text("waits for label text")')
+).toBeVisible();
+
+//Revisar playground
+await expect(
+  page.getByRole('heading', { name: 'Playground' })
+).toBeVisible();
+
+// Revisar Boton
+await page.getByRole('button', { name: 'Button Triggering AJAX Request' }).click();
+
+// 2. Selector del resultado
+  const result = page.locator('.bg-success');
+
+  // 3. Esperar a que aparezca
+  await expect(result).toBeVisible({ timeout: 20000 });
+
+  // 4. Verificar el texto
+  await expect(result).toContainText('Data loaded with AJAX get request');
 });
+
+
+
+
+
+
 
 
 
