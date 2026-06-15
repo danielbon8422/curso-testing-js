@@ -1,0 +1,2 @@
+# curso-testing-js
+all
