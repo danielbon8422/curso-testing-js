@@ -139,40 +139,82 @@ await expect(page.locator('p')).toHaveText(
 );
 
 //Revisar Scenario
+await expect(page.getByRole('heading', { name: 'Scenario' })).toBeVisible();
 
-await expect(
-  page.getByRole('heading', { name: 'Scenario' })
-).toBeVisible();
-
-
-
+//Revisar Text
 const items = page.locator('li');
+
 //primer li
-await expect(
-  page.locator('li:has-text("Record the following steps")')
-).toBeVisible();
+await expect(page.locator('li:has-text("Record the following steps")')).toBeVisible();
+
 //segundo li
-await expect(
-  page.locator('li:has-text("waits for label text")')
-).toBeVisible();
+await expect(page.locator('li:has-text("waits for label text")')).toBeVisible();
 
 //Revisar playground
-await expect(
-  page.getByRole('heading', { name: 'Playground' })
-).toBeVisible();
+await expect(page.getByRole('heading', { name: 'Playground' })).toBeVisible();
 
 // Revisar Boton
 await page.getByRole('button', { name: 'Button Triggering AJAX Request' }).click();
 
-// 2. Selector del resultado
+// Selector del resultado
   const result = page.locator('.bg-success');
 
-  // 3. Esperar a que aparezca
+  // Esperar a que aparezca
   await expect(result).toBeVisible({ timeout: 20000 });
 
-  // 4. Verificar el texto
+  // Verificar el texto
   await expect(result).toContainText('Data loaded with AJAX get request');
 });
+
+// Test 6 Verificar Dynamic Table
+test('verificar Dynamic Table completa', async ({ page }) => {
+
+  // Ir a la página principal
+  await page.goto('http://uitestingplayground.com/');
+
+  // Click en Dynamic Table
+  await page.getByRole('link', { name: 'Dynamic Table' }).click();
+
+  // Verificar URL
+  await expect(page).toHaveURL(/dynamictable/);
+
+  // Verificación visual Dynamic table
+  await expect(page.getByRole('heading', { name: 'Dynamic Table' })).toBeVisible();
+
+  // Verificar texto
+  await expect(page.locator('p').filter({ hasText: 'Below you see a table' })).toContainText('Below you see a table');
+
+  // Validar el Link
+  const link = page.getByRole('link', { name: 'WAI-ARIA' });
+
+  await expect(link).toBeVisible();
+
+  // Validar el href del link
+  await expect(link).toHaveAttribute(
+    'href',
+    'https://www.w3.org/TR/wai-aria-practices/examples/table/table.html'
+  );
+
+  // Verificacion Visual Scenario
+  await expect(page.getByRole('heading', { name: 'Scenario' })).toBeVisible();
+
+// Verificar Texto
+await expect(page.getByText('For Chrome process get value of CPU load.')).toBeVisible();
+
+await expect(
+  page.getByText('Compare it with value in the yellow label.')).toBeVisible();
+
+//Verificacion Visual Playground
+
+await expect(page.getByRole('heading', { name: 'Playground' })).toBeVisible();
+
+//Verificar texto
+await expect(page.locator('#table_desc')).toHaveText('Task Manager');
+
+});
+
+
+
 
 
 
