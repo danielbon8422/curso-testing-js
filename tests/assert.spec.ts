@@ -210,8 +210,90 @@ await expect(page.getByRole('heading', { name: 'Playground' })).toBeVisible();
 
 //Verificar texto
 await expect(page.locator('#table_desc')).toHaveText('Task Manager');
+});
+
+// Test 7 Validar tabla Playground
+test('validar tabla dinámica completa', async ({ page }) => {
+  await page.goto('http://uitestingplayground.com/dynamictable');
+
+  // 1 Validar todas las filas
+  const nombres = ['Firefox', 'Internet Explorer', 'Chrome', 'System'];
+
+  for (const nombre of nombres) {
+    const fila = page.locator('div[role="row"]', { hasText: nombre });
+
+    await expect(fila).toContainText('MB');    // Memory
+    await expect(fila).toContainText('MB/s');  // Disk
+    await expect(fila).toContainText('Mbps');  // Network
+    await expect(fila).toContainText('%');     // CPU
+  }
+
+
+  //  2 Validar linea amarilla
+  const label = page.locator('.bg-warning');
+
+  await expect(label).toBeVisible();
+  await expect(label).toContainText('Chrome');
+  await expect(label).toContainText('CPU');
+  await expect(label).toContainText('%');
+
+  //  3. Comparar CPU de Chome
+
+  // Valor del label : "2.8%"
+  const textoLabel = await label.textContent();
+  const cpuLabel = textoLabel.split(': ')[1];
+
+  // sacar CPU desde la tabla (por %, no por posición)
+  const cpuTabla = await page
+    .locator('div[role="row"]', { hasText: 'Chrome' })
+    .locator('span', { hasText: '%' })
+    .textContent();
+
+  // comparación final
+  expect(cpuTabla).toBe(cpuLabel);
+});
+
+// Test 8 Verify text
+test('click en Verify Text', async ({ page }) => {
+
+
+  // 1 Ir a home y hacer click
+
+  await page.goto('http://uitestingplayground.com');
+
+  await page.getByRole('link', { name: 'Verify Text' }).click();
+
+
+  // 2 Validar titulo
+  await expect(page.getByRole('heading', { level: 3, name: 'Verify Text' })).toBeVisible();
+
+  // 3 Validar Primer parrafo
+  await expect(page.locator('p').first()).toContainText('inner text of a DOM element');
+
+  // 4 Texto duplicado (Hello UserName)
+  const saludo = page.getByText('Hello UserName!');
+  await expect(saludo).toHaveCount(2); // hay 2
+  await expect(saludo.first()).toBeVisible();
+
+  // 5 Validar Parrafo
+  await expect(page.locator('p', { hasText: 'searching for an element' })).toBeVisible();
+
+  // 6 Bloques Explicativos
+  await expect(page.getByText('Does not work')).toBeVisible();
+  await expect(page.getByText('Works')).toBeVisible();
+
+  // 7 Validar Header Scenario
+  await expect(page.getByRole('heading', { level: 4, name: 'Scenario' })).toBeVisible();
+
+  // 8. Texto Final
+  await expect(page.locator('.badge-secondary', { hasText: 'Welcome UserName!' })).toBeVisible();
 
 });
+
+
+
+
+
 
 
 
