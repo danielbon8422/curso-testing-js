@@ -284,9 +284,13 @@ test('click en Verify Text', async ({ page }) => {
 
   // 7 Validar Header Scenario
   await expect(page.getByRole('heading', { level: 4, name: 'Scenario' })).toBeVisible();
+  await expect(page.locator('.badge-secondary', { hasText: 'Welcome...' })).toBeVisible();
 
-  // 8. Texto Final
+
+  // 8 Validar Playground
   await expect(page.locator('.badge-secondary', { hasText: 'Welcome UserName!' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 4, name: 'Playground' })).toBeVisible();
+
 
 });
 
