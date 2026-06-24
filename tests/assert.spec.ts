@@ -36,26 +36,12 @@ test('verificar Class Attribute', async ({ page }) => {
   await page.goto('http://uitestingplayground.com/classattr');
 
   //  Verificar títulos
-  await expect(
-    page.getByRole('heading', { name: 'Class Attribute' })
-  ).toBeVisible();
-
-
-await expect(
-  page.getByRole('heading', { name: 'Scenario' })
-).toBeVisible();
-
-
-await expect(
-  page.getByRole('heading', { name: 'Playground' })
-).toBeVisible();
-
-
+  await expect(page.getByRole('heading', { name: 'Class Attribute' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Scenario' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Playground' })).toBeVisible();
 
   //  Verificar que hay 3 botones
-  await expect(
-    page.locator('.btn-test')
-  ).toHaveCount(3);
+  await expect(page.locator('.btn-test')).toHaveCount(3);
 
   //  Manejar el popup (ANTES del click)
   page.on('dialog', async dialog => {
@@ -75,9 +61,7 @@ test('verificar Hidden Layers', async ({ page }) => {
   await page.goto('http://uitestingplayground.com/hiddenlayers');
 
   //  Verificar título principal
-  await expect(
-    page.getByRole('heading', { name: 'Hidden Layers' })
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Hidden Layers' })).toBeVisible();
 
   //  Verificar párrafo
   const paragraph = page.locator('p');
@@ -87,9 +71,7 @@ test('verificar Hidden Layers', async ({ page }) => {
   await expect(paragraph).toContainText('invisible to a user');
 
   //  Verificar Scenario
-  await expect(
-    page.getByRole('heading', { name: 'Scenario' })
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Scenario' })).toBeVisible();
 
   //  Verificar lista
   const item1 = page.locator('li:has-text("Record button click")');
@@ -99,9 +81,7 @@ test('verificar Hidden Layers', async ({ page }) => {
   await expect(item2).toBeVisible();
 
   //  Verificar Playground
-  await expect(
-    page.getByRole('heading', { name: 'Playground' })
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Playground' })).toBeVisible();
 
   //  BOTÓN VERDE (PRIMERO)
   const greenButton = page.locator('.btn-success');
@@ -133,10 +113,7 @@ test('click en AJAX Data', async ({ page }) => {
   await expect(page.locator('h3')).toHaveText('AJAX Data');
 
   //Revisar texto
-
-await expect(page.locator('p')).toHaveText(
-  'An element may appear on a page after processing of an AJAX request to a web server. A test should be able to wait for an element to show up.'
-);
+  await expect(page.locator('p')).toHaveText('An element may appear on a page after processing of an AJAX request to a web server. A test should be able to wait for an element to show up.');
 
 //Revisar Scenario
 await expect(page.getByRole('heading', { name: 'Scenario' })).toBeVisible();
@@ -157,13 +134,13 @@ await expect(page.getByRole('heading', { name: 'Playground' })).toBeVisible();
 await page.getByRole('button', { name: 'Button Triggering AJAX Request' }).click();
 
 // Selector del resultado
-  const result = page.locator('.bg-success');
+const result = page.locator('.bg-success');
 
-  // Esperar a que aparezca
-  await expect(result).toBeVisible({ timeout: 20000 });
+// Esperar a que aparezca
+await expect(result).toBeVisible({ timeout: 20000 });
 
-  // Verificar el texto
-  await expect(result).toContainText('Data loaded with AJAX get request');
+// Verificar el texto
+await expect(result).toContainText('Data loaded with AJAX get request');
 });
 
 // Test 6 Verificar Dynamic Table
@@ -198,22 +175,21 @@ test('verificar Dynamic Table completa', async ({ page }) => {
   // Verificacion Visual Scenario
   await expect(page.getByRole('heading', { name: 'Scenario' })).toBeVisible();
 
-// Verificar Texto
-await expect(page.getByText('For Chrome process get value of CPU load.')).toBeVisible();
+  // Verificar Texto
+  await expect(page.getByText('For Chrome process get value of CPU load.')).toBeVisible();
 
-await expect(
-  page.getByText('Compare it with value in the yellow label.')).toBeVisible();
+  await expect(page.getByText('Compare it with value in the yellow label.')).toBeVisible();
 
-//Verificacion Visual Playground
+  //Verificacion Visual Playground
 
-await expect(page.getByRole('heading', { name: 'Playground' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Playground' })).toBeVisible();
 
-//Verificar texto
-await expect(page.locator('#table_desc')).toHaveText('Task Manager');
-});
+  //Verificar texto
+  await expect(page.locator('#table_desc')).toHaveText('Task Manager');
+ });
 
-// Test 7 Validar tabla Playground
-test('validar tabla dinámica completa', async ({ page }) => {
+  // Test 7 Validar tabla Playground
+  test('validar tabla dinámica completa', async ({ page }) => {
   await page.goto('http://uitestingplayground.com/dynamictable');
 
   //  Validar todas las filas
@@ -291,8 +267,262 @@ test('click en Verify Text', async ({ page }) => {
   await expect(page.locator('.badge-secondary', { hasText: 'Welcome UserName!' })).toBeVisible();
   await expect(page.getByRole('heading', { level: 4, name: 'Playground' })).toBeVisible();
 
+});
+  // Test 9 Verificar "Progress bar"
+  test('click en Progress Bar', async ({ page }) => {await page.goto('http://uitestingplayground.com/');
+
+  // Click enlace
+  await page.getByRole('link', { name: 'Progress Bar' }).click();
+
+  // Validar clic enlace
+  await expect(page).toHaveURL(/.*progressbar/);
+
+  // Validar encabezado de la página
+  await expect(page.locator('h3')).toHaveText('Progress Bar');
+
+  // Validar primer parrafo
+  await expect(page.locator('p').first()).toContainText('A web application may use a progress bar');
+
+  // Validar Texto "Scenario"
+  await expect(page.getByText('Scenario')).toBeVisible();
+
+  // Validar segundo parrafo
+  await expect(page.getByText('Create a test that clicks Start button')).toBeVisible();
+
+
+  // Validar texto Playground
+  await expect(page.getByRole('heading', { level: 4, name: 'Playground' })).toBeVisible();
+
+  // Validar Botones Start, Stop y la ProgressBar
+
+const progressBar = page.locator('#progressBar');
+
+  // Start
+  await page.getByRole('button', { name: 'Start' }).click();
+
+  await page.waitForTimeout(2000);
+
+  // Stop
+  await page.getByRole('button', { name: 'Stop' }).click();
+
+  const stoppedValue = await progressBar.textContent();
+
+  await page.waitForTimeout(1000);
+
+  const finalValue = await progressBar.textContent();
+
+  // Validar que no cambia
+  expect(stoppedValue).toBe(finalValue);
+
+  // Validar Resultado
+  await expect(page.locator('#result')).toContainText('Result:');
+  await expect(page.locator('#result')).toContainText('duration:');
+});
+  // Test 10 Validar Visibility
+  test('click en Visibility', async ({ page }) => {await page.goto('http://uitestingplayground.com/');
+
+  // Validar link
+  await expect(page.getByRole('link', { name: 'Visibility' })).toBeVisible();
+
+  // Click
+  await page.getByRole('link', { name: 'Visibility' }).click();
+
+  // Validar navegación
+  await expect(page).toHaveURL(/.*visibility/);
+
+  // Validar que cargó la página
+  await expect(page.locator('h3')).toHaveText('Visibility');
+
+  // Validar primer Parrafo
+  await expect(page.locator('p', { hasText: 'Checking if element is visible' })).toBeVisible();
+
+  // Validar li Parrafo
+  await expect(page.locator('li', { hasText: 'removed' })).toBeVisible();
+  await expect(page.locator('li', { hasText: 'zero height' })).toBeVisible();
+  await expect(page.locator('li', { hasText: 'covered by another' })).toBeVisible();
+  await expect(page.locator('li', { hasText: 'opacity' })).toBeVisible();
+  await expect(page.locator('li', { hasText: 'offscreen' })).toBeVisible();
+
+  // Validar Scenario
+  await expect(page.locator('h4', { hasText: 'Scenario' })).toBeVisible();
+
+  // Validar li Scenario
+  await expect(page.locator('li', { hasText: 'Learn locators' })).toBeVisible();
+  await expect(page.locator('li', { hasText: 'Hide button' })).toBeVisible();
+  await expect(page.locator('li', { hasText: 'other buttons visible' })).toBeVisible();
+
+  // Validar Playground
+    await expect(page.locator('h4', { hasText: 'Playground' })).toBeVisible();
+
+  // ("Validar boton Hide")
+    const hideBtn = page.getByRole('button', { name: 'Hide' });await expect(hideBtn).toBeVisible();
+
+// Click en Hide
+  await hideBtn.click();
+
+  // Validaciones importantes
+
+  // Elemento eliminado del DOM
+  await expect(page.locator('#removedButton')).not.toBeAttached();
+
+  // Elemento con visibility hidden
+  await expect(page.locator('#visibilityButton')).toBeHidden();
+
+  // Elemento con opacity 0
+  await expect(page.locator('#hiddenButton')).toBeHidden();
+
+  // Elemento overlapped (no visible)
+  await expect(page.locator('#overlappedButton')).toBeVisible();
+
+  // Elemento offscreen
+  await expect(page.locator('#offscreenButton')).toBeVisible();
+});
+
+  // Test 11 Sample App
+  test('click en Sample App', async ({ page }) => {
+  await page.goto('http://uitestingplayground.com/');
+
+  // Validar link
+  await expect(page.getByRole('link', { name: 'Sample App' })).toBeVisible();
+
+  // Click
+  await page.getByRole('link', { name: 'Sample App' }).click();
+
+  // Validar navegación
+  await expect(page).toHaveURL(/.*sampleapp/);
+
+  // Validar Texto
+  await expect(page.locator('h3')).toHaveText('Sample App');
+
+  // Validar Primer Parrafo
+  await expect(page.locator('p', { hasText: 'Fill in and submit the form' })).toBeVisible();
+
+  // Validar user logged out
+  await expect(page.locator('#loginstatus')).toContainText('User logged out');
+
+  // Validar inputs
+  await expect(page.getByPlaceholder('User Name')).toBeVisible();
+  await expect(page.getByPlaceholder('********')).toBeVisible();
+
+  // Rellenar formulario
+  await page.getByPlaceholder('User Name').fill('Daniel');
+  await page.getByPlaceholder('********').fill('pwd');
+
+  // Click login
+  await page.getByRole('button', { name: 'Log In' }).click();
+
+  // Validar login correcto
+  await expect(page.locator('#loginstatus')).toContainText('Welcome');
+});
+
+  // Test 12 Mouse Over
+   test('Test 11 - Mouse Over completo', async ({ page }) => {
+
+  // Ir directamente a la página (más estable)
+  await page.goto('http://uitestingplayground.com/mouseover');
+
+  // Título
+  await expect(page.locator('h3')).toHaveText('Mouse Over');
+
+  // Primer párrafo
+  await expect(page.locator('p').first()).toContainText('Placing mouse over');
+
+  // Segundo párrafo
+  await expect(page.getByText('element may be modified', { exact: false })).toBeVisible();
+
+  // Scenario
+  await expect(page.getByText('Scenario')).toBeVisible();
+  await expect(page.getByText('Record 2 consecutive link clicks.', { exact: false })).toBeVisible();
+
+  // Playground
+  await expect(page.getByText('Playground')).toBeVisible();
+  await expect(page.getByText('new title assigned to it', { exact: false })).toBeVisible();
+
+  // Importante("Hover": pasar por encima de un elemento sin hacer click)
+  // Primer click
+  await page.getByText('Click me').hover();
+  await page.getByText('Click me').click();
+
+  // Segundo click (para que siempre lo relocalize )
+  await page.getByText('Click me').hover();
+  await page.getByText('Click me').click();
+  await expect(page.locator('#clickCount')).toContainText('2');
 
 });
+
+// Test 13 Non-Breacking Space
+  test('Ir a Non-Breaking Space', async ({ page }) => {
+
+  await page.goto('http://uitestingplayground.com/');
+
+  // Click en el enlace
+  await page.getByRole('link', { name: 'Non-Breaking Space' }).click();
+
+  // Validar que navega
+  await expect(page).toHaveURL('http://uitestingplayground.com/nbsp');
+
+  // Validar texto
+  await expect(page.locator('h3')).toHaveText('Non-Breaking Space');
+  await expect(page.locator('p')).toContainText('non-breaking spaces');
+  await expect(page.getByRole('heading', { name: 'Scenario' })).toBeVisible();
+  await expect(page.locator('p')).toContainText('There are cases in test automation');
+  await expect(page.locator('li').filter({ hasText: 'XPath does not work' })).toContainText("Change the space between 'My' and 'Button'");
+  await expect(page.getByRole('heading', { level: 4, name: 'Playground' })).toBeVisible();
+
+  // Validar Boton
+  await page.getByRole("button", { name: "My Button" }).click();
+});
+
+  // Test 14 "Elemento Superpuesto"
+  test('Ir a Overlapped Element', async ({ page }) => {
+  await page.goto('http://uitestingplayground.com/');
+
+  await page.getByRole("link", { name: "Overlapped Element" }).click();
+
+  await expect(page).toHaveURL('http://uitestingplayground.com/overlapped');
+
+  // Verificar Texto
+  await expect(page.getByText("Overlapped Element")).toBeVisible();
+  await expect(page.locator("p")).toContainText("partially visible element");
+  await expect(page.getByRole("heading", { level: 4, name: "Scenario" })).toBeVisible();
+  await expect(page.getByText("Record setting text into the Name input field (scroll element before entering the text).")).toBeVisible();
+  await expect(page.getByText("Then execute your test to make sure that the text was entered correctly.")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 4, name: "Playground" })).toBeVisible();
+
+  // Verificar Elemento Superpuesto
+  await page.getByPlaceholder("Id").fill("123456");
+  await expect(page.getByPlaceholder("Id")).toHaveValue("123456");
+
+  const nameInput = page.locator('#name');
+
+  await nameInput.scrollIntoViewIfNeeded();
+  await page.evaluate(() => {document.querySelector('#name').value = 'DaniDaniel';});
+  await expect(nameInput).toHaveValue('DaniDaniel');
+
+  const overlay = page.locator('div[style*="position: absolute"]');
+
+  await expect(overlay).toBeVisible();
+  await expect(overlay).toHaveCSS("width", "300px");
+  await expect(overlay).toHaveCSS("height", "50px");
+  await expect(overlay).toHaveCSS("top", "67px");
+
+  // Validar que se esta solapando encima del Imput Name
+  const overlayBox = await overlay.boundingBox();
+  const inputBox = await page.locator('#name').boundingBox();
+  expect(overlayBox.y < inputBox.y + inputBox.height).toBeTruthy();
+
+  });
+
+
+
+
+
+
+
+
+
+
+
 
 
 
