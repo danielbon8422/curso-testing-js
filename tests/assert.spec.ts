@@ -513,6 +513,77 @@ const progressBar = page.locator('#progressBar');
 
   });
 
+  // Test 15 Shadow Dom
+  test('Validar enlace Shadow DOM', async ({ page }) => {
+  await page.goto('http://uitestingplayground.com');
+
+  const link = page.getByRole("link", { name: "Shadow DOM" });
+
+  await expect(link).toBeVisible();
+  await expect(link).toHaveAttribute("href", "/shadowdom");
+
+  await link.click();
+  await expect(page).toHaveURL(/shadowdom/);
+
+  // Validar Texto
+  const heading = page.getByRole("heading", { level: 3, name: "Shadow DOM" });
+  await expect(heading).toBeVisible();
+  await expect(page.getByText("This is a page with a Shadow DOM component guid-generator. Using it one can generate a guid and copy it to the clipboard.")).toBeVisible();
+
+  const scenarioHeading = page.getByRole("heading", { level: 4, name: "Scenario" });
+  await expect(scenarioHeading).toBeVisible();
+  await expect(page.getByText("Scenario")).toBeVisible();
+  await expect(page.getByText("Create a test that clicks on")).toBeVisible();
+  await expect(page.getByText("Add an assertion step")).toBeVisible();
+  await expect(page.getByText("Then execute the test")).toBeVisible();
+
+  const playgroundHeading = page.getByRole("heading", { level: 4, name: "Playground" });
+  await expect(playgroundHeading).toBeVisible();
+
+  await expect(page.getByText("GUID Generator:")).toBeVisible();
+
+  // Validar Field
+  await expect(page.locator('.edit-field')).toBeVisible(); // por clase
+  await expect(page.locator('#editField')).toHaveValue(''); // Validar que esta vacio
+  // Validar que se puede escribir en el
+  const input = page.locator('#editField');
+  await input.fill('DaniDaniel');
+  await expect(input).toHaveValue('DaniDaniel');
+  //Validar Primer Boton
+  const generateBtn = page.locator('#buttonGenerate');
+  await expect(generateBtn).toBeVisible();
+  await generateBtn.click();
+  const value = await input.inputValue();
+  expect(value.length).toBeGreaterThan(0);
+  });
+
+  //16 Validar Segundo Boton
+
+
+test('Segundo Boton', async ({ browser }) => {
+
+  const context = await browser.newContext({
+    permissions: ['clipboard-read', 'clipboard-write']
+  });
+
+  const page = await context.newPage();
+
+  // Ir a la página correcta
+  await page.goto('http://uitestingplayground.com/shadowdom');
+
+  // Botón copy
+  const copyBtn = page.locator('#buttonCopy');
+  await expect(copyBtn).toBeVisible();
+
+  await copyBtn.click();
+
+  // Leer clipboard
+  const text = await page.evaluate(() => navigator.clipboard.readText());
+  console.log(text);
+
+});
+
+
 
 
 
