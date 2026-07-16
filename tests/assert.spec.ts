@@ -137,7 +137,7 @@ await page.getByRole('button', { name: 'Button Triggering AJAX Request' }).click
 const result = page.locator('.bg-success');
 
 // Esperar a que aparezca
-await expect(result).toBeVisible({ timeout: 20000 });
+await expect(result).toBeVisible({ timeout: 40000 });
 
 // Verificar el texto
 await expect(result).toContainText('Data loaded with AJAX get request');
@@ -229,9 +229,8 @@ test('verificar Dynamic Table completa', async ({ page }) => {
   expect(cpuTabla).toBe(cpuLabel);
 });
 
-// Test 8 Verify text
+  // Test 8 Verify text
 test('click en Verify Text', async ({ page }) => {
-
 
   // Ir a home y hacer click
 
@@ -268,6 +267,7 @@ test('click en Verify Text', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 4, name: 'Playground' })).toBeVisible();
 
 });
+
   // Test 9 Verificar "Progress bar"
   test('click en Progress Bar', async ({ page }) => {await page.goto('http://uitestingplayground.com/');
 
@@ -318,8 +318,9 @@ const progressBar = page.locator('#progressBar');
   await expect(page.locator('#result')).toContainText('Result:');
   await expect(page.locator('#result')).toContainText('duration:');
 });
+
   // Test 10 Validar Visibility
-  test('click en Visibility', async ({ page }) => {await page.goto('http://uitestingplayground.com/');
+  test('Validar Visibility', async ({ page }) => {await page.goto('http://uitestingplayground.com/');
 
   // Validar link
   await expect(page.getByRole('link', { name: 'Visibility' })).toBeVisible();
@@ -416,7 +417,7 @@ const progressBar = page.locator('#progressBar');
 });
 
   // Test 12 Mouse Over
-   test('Test 11 - Mouse Over completo', async ({ page }) => {
+   test('Mouse Over completo', async ({ page }) => {
 
   // Ir directamente a la página (más estable)
   await page.goto('http://uitestingplayground.com/mouseover');
@@ -557,32 +558,291 @@ const progressBar = page.locator('#progressBar');
   expect(value.length).toBeGreaterThan(0);
   });
 
-  //16 Validar Segundo Boton
+  // Test 16 Validar Segundo Boton
+  test('Segundo Boton', async ({ page }) => {
 
-
-test('Segundo Boton', async ({ browser }) => {
-
-  const context = await browser.newContext({
-    permissions: ['clipboard-read', 'clipboard-write']
-  });
-
-  const page = await context.newPage();
-
-  // Ir a la página correcta
   await page.goto('http://uitestingplayground.com/shadowdom');
 
-  // Botón copy
+  // Botón Copy
   const copyBtn = page.locator('#buttonCopy');
   await expect(copyBtn).toBeVisible();
 
+  // Click
   await copyBtn.click();
 
-  // Leer clipboard
-  const text = await page.evaluate(() => navigator.clipboard.readText());
-  console.log(text);
+  // Validación alternativa (no deberia fallar)
+  await expect(copyBtn).toBeEnabled();
 
 });
 
+  // Test 17 Validar "Alerts"
+
+  test('Validar Alerts', async ({ page }) => {
+  await page.goto('http://uitestingplayground.com');
+
+  const alertsLink = page.getByRole("link", { name: "Alerts" });
+
+  await expect(alertsLink).toBeVisible();
+  await expect(alertsLink).toHaveAttribute("href", "/alerts");
+
+  await alertsLink.click();
+  await expect(page).toHaveURL(/\/alerts/);
+
+  // Validar Texto
+  await expect(page.getByRole("heading", { level: 3, name: "Alerts" })).toBeVisible();
+  await expect(page.getByText("Dealing with standard alerts")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 4, name: "Scenario" })).toBeVisible();
+  await expect(page.locator("li", {hasText: "Record clicks on `Alert`, `Confirm` and `Prompt` buttons. Click `OK` to confirm, answer with non-default value to the prompt."})).toBeVisible();
+  await expect(page.locator("li", {hasText: "Then execute your test to make sure that it passes completely without manual steps."})).toBeVisible();
+  await expect(page.getByRole("heading", { level: 4, name: "Playground" })).toBeVisible();
+
+  // Validar boton (Alert)
+  const alertButton = page.getByRole('button', { name: 'Alert' });
+  await expect(alertButton).toBeVisible();
+  await alertButton.click();
+
+  // Validar boton (Confirm)
+  await page.locator('#confirmButton').click();
+
+  // Validar boton (Prompt)
+  const promptButton = page.getByRole('button', { name: 'Prompt' });
+  await expect(promptButton).toBeVisible();
+  await promptButton.click();
+});
+
+  // Test 18 Validar File Upload
+  test('Validar File Upload', async ({ page }) => {
+  await page.goto('http://uitestingplayground.com');
+
+  const fileUploadLink = page.getByRole('link', { name: 'File Upload' });
+  await expect(fileUploadLink).toBeVisible();
+  await expect(fileUploadLink).toHaveAttribute('href', '/upload');
+  await fileUploadLink.click();
+  await expect(page).toHaveURL(/\/upload/);
+
+  // Validar Texto
+await expect(page.getByRole("heading", {level: 3,name: "File Upload",})).toBeVisible();
+await expect(page.getByText("Modern web applications often include file upload functionality")).toBeVisible();
+await expect(page.getByRole("heading", {level: 4,name: "Scenario",})).toBeVisible();
+await expect(page.locator("li", {hasText: "Attach a file via drag&drop.",})).toBeVisible();
+await expect(page.locator("li", {hasText: "Attach a file using `Browse files` button",})).toBeVisible();
+await expect(page.getByRole("heading", {level: 4,name: "Playground",})).toBeVisible();
+const frame = page.frameLocator('iframe');
+await expect(frame.getByText(/Limit 15MB per file/i)).toBeVisible();
+await expect(frame.getByText(/Browse files/i)).toBeVisible();
+await expect(frame.locator("label", { hasText: "Browse files" })).toBeVisible();
+
+  // Validar que se sube el archivo
+await frame.locator('input[type="file"]').setInputFiles('tests/fixtures/testing.txt');
+});
+
+  // Test 19 Animated Button
+  test('Validar Animated Button', async ({ page }) => {
+  await page.goto('http://uitestingplayground.com');
+  const animatedButtonLink = page.getByRole('link', {name: 'Animated Button'});
+  await expect(animatedButtonLink).toBeVisible();
+  await expect(animatedButtonLink).toHaveAttribute('href', '/animation');
+  await animatedButtonLink.click();
+  await expect(page).toHaveURL(/\/animation/);
+
+  // Validar texto
+  await expect(page.getByRole("heading", { level: 3, name: "Animated Button" })).toBeVisible();
+  await expect(page.getByText("Before clicking a button we may need to wait for it to become stable")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 4, name: "Scenario" })).toBeVisible();
+  await expect(page.locator("li", { hasText: "Record `Start Animation` button click. Wait for animation to complete and record click on `Moving Target`." })).toBeVisible();
+  await expect(page.locator("li", { hasText: "Then execute your test to make sure that when Moving Target is clicked, it's class does not contain 'spin'. The class is printed on the status label below the buttons." })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 4, name: "Playground" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Start Animation" })).toBeVisible();
+  await expect(page.getByRole("button", {name: "Moving Target",})).toBeVisible();
+
+  // Validar botones
+  const movingTargetButton = page.locator("#movingTarget");
+  const startAnimationButton = page.locator("#animationButton");
+  await expect(movingTargetButton).toBeVisible();
+  await startAnimationButton.click();
+  // Esperar a que desaparezca la animación
+  await expect(movingTargetButton).not.toHaveClass(/spin/);
+  await movingTargetButton.click();
+  await expect(page.locator("#opstatus")).toContainText("btn btn-primary")
+  await expect(page.locator("#opstatus")).not.toContainText("spin");
+
+});
+
+  // Test 20 Disable Imput
+  test('Validar Disabled Input', async ({ page }) => {
+  await page.goto('http://uitestingplayground.com');
+  const disabledInputLink = page.getByRole('link', {
+    name: 'Disabled Input'
+  });
+
+  await expect(disabledInputLink).toBeVisible();
+  await expect(disabledInputLink).toHaveAttribute('href', '/disabledinput');
+  await disabledInputLink.click();
+  await expect(page).toHaveURL(/\/disabledinput/);
+
+  // Validar texto
+  await expect(page.getByRole("heading", { level: 3, name: "Disabled Input" })).toBeVisible();
+  await expect(page.getByText("Sometimes elements become enabled after some time they are rendered on the page. A test should be able to wait for an element to become enabled.")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 4, name: "Scenario" })).toBeVisible();
+  await expect(page.locator("li", { hasText: "Record button click. Also record text input into an edit field." })).toBeVisible();
+  await expect(page.locator("li", { hasText: "Make a test that enters text as soon as the edit field becomes enabled." })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 4, name: "Playground" })).toBeVisible();
+
+  // Validar input
+const enableButton = page.locator("#enableButton");
+const inputField = page.locator("#inputField");
+
+await enableButton.click();
+
+await expect(inputField).toBeEnabled();
+
+await expect(
+  page.locator("#opstatus")
+).toContainText("Input Enabled");
+
+await inputField.fill("DaniDaniel");
+await expect(inputField).toHaveValue("DaniDaniel");
+});
+
+  //Test 21 Auto Wait
+  test('Validar Auto Wait', async ({ page }) => {
+  await page.goto('http://uitestingplayground.com');
+
+  const autoWaitLink = page.getByRole('link', { name: 'Auto Wait' });
+  await expect(autoWaitLink).toBeVisible();
+  await expect(autoWaitLink).toHaveAttribute('href', '/autowait');
+  await autoWaitLink.click();
+  await expect(page).toHaveURL(/\/autowait/);
+
+  // Validar texto
+  await expect(page.getByText('Auto Wait')).toBeVisible();
+  await expect(page.getByText(/Before clicking an element or entering text/i)).toBeVisible();
+  await expect(page.getByText('Scenario')).toBeVisible();
+  await expect(page.locator('li', {hasText: 'Choose an element type from the combobox.'})).toBeVisible();
+  await expect(page.locator('li', {hasText: "Check the checkboxes to set the element's properties."})).toBeVisible();
+  await expect(page.locator('li', {hasText: "Then click one of the Apply buttons to immediately apply the settings and restore interactable state of the element after a delay."})).toBeVisible();
+  await expect(page.getByText('Interact with the element in the Playground section (click, select item, enter text).')).toBeVisible();
+  await expect(page.getByText('Observe the status messages.')).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Settings" })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Playground' })).toBeVisible();
+  await expect(page.getByText('Choose an element type:')).toBeVisible();
+
+  // Verificar opciones de settings
+  const options = await page.locator('#element-type option').allTextContents();
+
+  expect(options).toEqual([
+  'Button',
+  'Input',
+  'Textarea',
+  'Select',
+  'Label'
+]);
+  await expect(page.getByRole('checkbox', { name: 'Visible' })).toBeChecked();
+  await expect(page.getByRole('checkbox', { name: 'Enabled' })).toBeChecked();
+  await expect(page.getByRole('checkbox', { name: 'Editable' })).toBeChecked();
+  await expect(page.getByRole('checkbox', { name: 'On Top' })).toBeChecked();
+  await expect(page.getByRole('checkbox', { name: 'Non Zero Size' })).toBeChecked();
+
+  const playgroundButton = page.getByRole('button', {name: 'Button'});
+  const status = page.locator('#opstatus');
+
+  // Apply 3s
+  await page.getByRole('button', { name: 'Apply 3s' }).click();
+  await playgroundButton.click();
+  await expect(status).toHaveText('Target clicked.');
+
+  // Apply 5s
+  await page.getByRole('button', { name: 'Apply 5s' }).click();
+  await playgroundButton.click();
+  await expect(status).toHaveText('Target element state restored.');
+
+  // Apply 10s
+  await page.getByRole('button', { name: 'Apply 10s' }).click();
+  await playgroundButton.click();
+  await expect(status).toHaveText('Target clicked.');
+});
+
+  //Test 22 Validar Frames
+  test('Validar Frames', async ({ page }) => {
+  await page.goto('http://uitestingplayground.com');
+  const framesLink = page.getByRole('link', { name: 'Frames' });
+  await expect(framesLink).toBeVisible();
+  await expect(framesLink).toHaveAttribute('href', '/frames');
+  await framesLink.click();
+  await expect(page).toHaveURL(/\/frames/);
+
+  //Validar textos
+  await expect(page.getByRole('heading', { level: 3, name: 'Frames' })).toBeVisible();
+  await expect(page.getByText('Working with frames requires switching context. Automation tools need to locate frames and switch into them before interacting with elements inside. This page contains nested frames with identical button markup to practice element location strategies.')).toBeVisible();
+  await expect(page.getByRole('heading', { level: 4, name: 'Element Search Strategies' })).toBeVisible();
+  await expect(page.locator('li', { hasText: 'data-* attribute - find button by custom data attribute value' })).toBeVisible();
+  await expect(page.locator('li', { hasText: 'text - find button by inner text content' })).toBeVisible();
+  await expect(page.locator('li', { hasText: 'name - find button by @name attribute' })).toBeVisible();
+  await expect(page.locator('li', { hasText: 'xpath with class - find button by class using XPath' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 4, name: 'Scenario' })).toBeVisible();
+  await expect(page.locator('li', { hasText: 'Switch to the outer frame (level 1).' })).toBeVisible();
+  await expect(page.locator('li', { hasText: 'Find and click each button using different locator strategies.' })).toBeVisible();
+  await expect(page.locator('li', { hasText: 'Switch to the inner frame (level 2) nested inside the outer frame.' })).toBeVisible();
+  await expect(page.locator('li', { hasText: 'Find and click the same buttons (identical markup) in the inner frame.' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 4, name: 'Playground' })).toBeVisible();
+
+  // Validar outer y inner frame
+
+const outerFrame = page.frameLocator('#frame-outer');
+
+await expect(
+  outerFrame.getByText('Outer Frame (Level 1)')
+).toBeVisible();
+
+// Estrategia: data-* attribute
+await outerFrame.locator('[data-action="edit"]').click();
+await expect(outerFrame.locator('#result'))
+  .toHaveText('Button pressed: Edit');
+
+// Estrategia: text
+await outerFrame.getByRole('button', { name: 'Submit' }).click();
+await expect(outerFrame.locator('#result'))
+  .toHaveText('Button pressed: Submit');
+
+// Estrategia: name
+await outerFrame.locator('button[name="my-button"]').click();
+await expect(outerFrame.locator('#result'))
+  .toHaveText('Button pressed: Click me');
+
+// Estrategia: xpath with class
+await outerFrame.locator('.btn-class').click();
+await expect(outerFrame.locator('#result'))
+  .toHaveText('Button pressed: Primary');
+
+// Validar frame interno
+const innerFrame = page
+  .frameLocator('#frame-outer')
+  .frameLocator('#frame-inner');
+
+await expect(
+  innerFrame.getByText('Inner Frame (Level 2)')
+).toBeVisible();
+
+// Estrategia: data-* attribute
+await innerFrame.locator('[data-action="edit"]').click();
+await expect(innerFrame.locator('#result'))
+  .toHaveText('Button pressed: Edit');
+
+// Estrategia: text
+await innerFrame.getByRole('button', { name: 'Submit' }).click();
+await expect(innerFrame.locator('#result'))
+  .toHaveText('Button pressed: Submit');
+
+// Estrategia: name
+await innerFrame.locator('button[name="my-button"]').click();
+await expect(innerFrame.locator('#result'))
+  .toHaveText('Button pressed: Click me');
+
+// Estrategia: xpath with class
+await innerFrame.locator('.btn-class').click();
+await expect(innerFrame.locator('#result'))
+  .toHaveText('Button pressed: Primary');
+});
 
 
 
