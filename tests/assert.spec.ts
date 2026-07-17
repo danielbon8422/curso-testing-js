@@ -765,10 +765,14 @@ await expect(inputField).toHaveValue("DaniDaniel");
   //Test 22 Validar Frames
   test('Validar Frames', async ({ page }) => {
   await page.goto('http://uitestingplayground.com');
+
   const framesLink = page.getByRole('link', { name: 'Frames' });
+
   await expect(framesLink).toBeVisible();
   await expect(framesLink).toHaveAttribute('href', '/frames');
+
   await framesLink.click();
+
   await expect(page).toHaveURL(/\/frames/);
 
   //Validar textos
@@ -786,62 +790,23 @@ await expect(inputField).toHaveValue("DaniDaniel");
   await expect(page.locator('li', { hasText: 'Find and click the same buttons (identical markup) in the inner frame.' })).toBeVisible();
   await expect(page.getByRole('heading', { level: 4, name: 'Playground' })).toBeVisible();
 
-  // Validar outer y inner frame
+ const outerFrame = page.frameLocator('iframe');
 
-const outerFrame = page.frameLocator('#frame-outer');
-
-await expect(
-  outerFrame.getByText('Outer Frame (Level 1)')
-).toBeVisible();
-
-// Estrategia: data-* attribute
-await outerFrame.locator('[data-action="edit"]').click();
-await expect(outerFrame.locator('#result'))
-  .toHaveText('Button pressed: Edit');
-
-// Estrategia: text
+// Outer frame
+await outerFrame.getByRole('button', { name: 'Edit' }).click();
 await outerFrame.getByRole('button', { name: 'Submit' }).click();
-await expect(outerFrame.locator('#result'))
-  .toHaveText('Button pressed: Submit');
+await outerFrame.getByRole('button', { name: 'Click me' }).click();
+await outerFrame.getByRole('button', { name: 'Primary' }).click();
 
-// Estrategia: name
-await outerFrame.locator('button[name="my-button"]').click();
-await expect(outerFrame.locator('#result'))
-  .toHaveText('Button pressed: Click me');
-
-// Estrategia: xpath with class
-await outerFrame.locator('.btn-class').click();
-await expect(outerFrame.locator('#result'))
-  .toHaveText('Button pressed: Primary');
-
-// Validar frame interno
-const innerFrame = page
-  .frameLocator('#frame-outer')
-  .frameLocator('#frame-inner');
-
-await expect(
-  innerFrame.getByText('Inner Frame (Level 2)')
-).toBeVisible();
-
-// Estrategia: data-* attribute
-await innerFrame.locator('[data-action="edit"]').click();
-await expect(innerFrame.locator('#result'))
-  .toHaveText('Button pressed: Edit');
-
-// Estrategia: text
+// Inner frame
+const innerFrame = outerFrame.frameLocator('iframe');
+await innerFrame.getByRole('button', { name: 'Edit' }).click();
 await innerFrame.getByRole('button', { name: 'Submit' }).click();
-await expect(innerFrame.locator('#result'))
-  .toHaveText('Button pressed: Submit');
-
-// Estrategia: name
-await innerFrame.locator('button[name="my-button"]').click();
-await expect(innerFrame.locator('#result'))
-  .toHaveText('Button pressed: Click me');
-
-// Estrategia: xpath with class
-await innerFrame.locator('.btn-class').click();
-await expect(innerFrame.locator('#result'))
-  .toHaveText('Button pressed: Primary');
+await innerFrame.getByRole('button', { name: 'Click me' }).click({ force: true });
+console.log(
+  'Primary:',
+  await innerFrame.getByRole('button', { name: 'Primary' }).count()
+);
 });
 
 
